@@ -11,7 +11,9 @@ async def create_student_profile(profile: StudentProfile):
     if existing:
         raise HTTPException(status_code=400, detail="Student with this email already exists.")
     
-    profile_dict = profile.dict()
+    # Use model_dump with mode='json' to serialize all types properly
+    profile_dict = profile.model_dump(mode='json')
+    
     profile_dict["created_at"] = datetime.utcnow()
     profile_dict["updated_at"] = datetime.utcnow()
 

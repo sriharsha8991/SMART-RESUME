@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, HttpUrl
 from typing import List, Optional
-from datetime import date
+from datetime import datetime
 
 class Education(BaseModel):
     degree: str
@@ -36,7 +36,7 @@ class StudentProfile(BaseModel):
     full_name: str
     email: EmailStr
     phone: str
-    dob: date
+    dob: datetime
     location: str
     career_objective: str
     education: List[Education]
