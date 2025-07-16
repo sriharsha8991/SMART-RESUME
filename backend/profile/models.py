@@ -47,6 +47,5 @@ class StudentProfile(BaseModel):
     contributions: Optional[List[Contribution]] = []
     github_url: Optional[HttpUrl]
     linkedin_url: Optional[HttpUrl]
-    resume_link: Optional[HttpUrl]
     interests: Optional[List[str]]
     languages: Optional[List[str]]
