@@ -14,7 +14,7 @@ def serialize_document(doc: Dict[str, Any]) -> Dict[str, Any]:
         doc["_id"] = str(doc["_id"])
     return doc
 
-@router.post("/students/create", status_code=status.HTTP_201_CREATED)
+@router.post("/students/create",tags=["Students"], status_code=status.HTTP_201_CREATED)
 async def create_student_profile(profile: StudentProfile):
     try:
         existing = await student_collection.find_one({"email": profile.email})
@@ -39,7 +39,7 @@ async def create_student_profile(profile: StudentProfile):
             detail=f"Failed to create profile: {str(e)}"
         )
 
-@router.get("/students/{student_id}")
+@router.get("/students/{student_id}",tags=["Students"])
 async def get_student_profile(student_id: str):
     try:
         if not ObjectId.is_valid(student_id):
@@ -64,7 +64,7 @@ async def get_student_profile(student_id: str):
             detail=f"Failed to retrieve profile: {str(e)}"
         )
 
-@router.get("/students/email/{email}")
+@router.get("/students/email/{email}",tags=["Students"])
 async def get_student_by_email(email: str):
     try:
         student = await student_collection.find_one({"email": email})
@@ -83,7 +83,7 @@ async def get_student_by_email(email: str):
             detail=f"Failed to retrieve profile: {str(e)}"
         )
 
-@router.put("/students/{student_id}")
+@router.put("/students/{student_id}",tags=["Students"])
 async def update_student_profile(student_id: str, profile: StudentProfile):
     try:
         if not ObjectId.is_valid(student_id):
@@ -92,21 +92,50 @@ async def update_student_profile(student_id: str, profile: StudentProfile):
                 detail="Invalid student ID format"
             )
         
+        # Check if the student exists first
+        existing_student = await student_collection.find_one({"_id": ObjectId(student_id)})
+        if not existing_student:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Student profile not found"
+            )
+        
+        # Validate email uniqueness if email is being updated
+        if profile.email != existing_student.get("email"):
+            email_exists = await student_collection.find_one({
+                "email": profile.email,
+                "_id": {"$ne": ObjectId(student_id)}
+            })
+            if email_exists:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Email already exists for another student"
+                )
+        
         profile_dict = profile.model_dump(mode='json')
         profile_dict["updated_at"] = datetime.utcnow()
+        
+        # Preserve original creation timestamp
+        if "created_at" in existing_student:
+            profile_dict["created_at"] = existing_student["created_at"]
         
         result = await student_collection.update_one(
             {"_id": ObjectId(student_id)},
             {"$set": profile_dict}
         )
         
-        if result.matched_count == 0:
+        if result.modified_count == 0:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Student profile not found"
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No changes were made to the profile"
             )
         
-        return {"message": "Student profile updated successfully"}
+        # Return the updated student profile
+        updated_student = await student_collection.find_one({"_id": ObjectId(student_id)})
+        return {
+            "message": "Student profile updated successfully",
+            "student": serialize_document(updated_student)
+        }
     except HTTPException:
         raise
     except Exception as e:
@@ -115,33 +144,7 @@ async def update_student_profile(student_id: str, profile: StudentProfile):
             detail=f"Failed to update profile: {str(e)}"
         )
 
-@router.delete("/students/{student_id}")
-async def delete_student_profile(student_id: str):
-    try:
-        if not ObjectId.is_valid(student_id):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid student ID format"
-            )
-        
-        result = await student_collection.delete_one({"_id": ObjectId(student_id)})
-        
-        if result.deleted_count == 0:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Student profile not found"
-            )
-        
-        return {"message": "Student profile deleted successfully"}
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to delete profile: {str(e)}"
-        )
-
-@router.get("/students")
+@router.get("/students",tags=["Students"])
 async def list_student_profiles(skip: int = 0, limit: int = 100):
     try:
         cursor = student_collection.find().skip(skip).limit(limit)
