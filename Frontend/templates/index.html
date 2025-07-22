@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career LMS - Smart Resume Builder</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Build your professional resume with AI-powered Career LMS. Create, manage, and optimize your career profile effortlessly.">
+</head>
+<body>
+    <header>
+        <div class="hero-content">
+            <h1>Career LMS Portal</h1>
+            <p class="subtitle">Transform your career with AI-powered resume building and intelligent profile management</p>
+            <div class="cta-buttons">
+                <a href="/docs" class="btn btn-primary">Explore API</a>
+                <a href="#features" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="features" class="section loading">
+            <h2 class="section-title">Powerful Features</h2>
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI-Powered Resume Builder</h3>
+                    <p>Create professional resumes with intelligent suggestions and industry-specific optimizations powered by advanced AI technology.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">👤</div>
+                    <h3>Smart Profile Management</h3>
+                    <p>Maintain comprehensive professional profiles with seamless updates, version control, and real-time synchronization.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📊</div>
+                    <h3>Career Analytics</h3>
+                    <p>Get detailed insights into your career progression, skill gaps, and personalized recommendations for growth.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Goal Tracking</h3>
+                    <p>Set and monitor career objectives with milestone tracking and achievement analytics for continuous improvement.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔗</div>
+                    <h3>Integration Ready</h3>
+                    <p>Seamlessly integrate with popular job platforms, LinkedIn, and ATS systems for maximum reach and compatibility.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Real-time Updates</h3>
+                    <p>Keep your professional information current with instant updates across all platforms and connected services.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats">
+            <h2 class="section-title">Trusted by Professionals</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" data-target="10000">0</span>
+                    <span class="stat-label">Active Users</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="50000">0</span>
+                    <span class="stat-label">Resumes Created</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="95">0</span>
+                    <span class="stat-label">Success Rate %</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="24">0</span>
+                    <span class="stat-label">Countries</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="section loading">
+            <h2 class="section-title">Why Choose Career LMS?</h2>
+            <div class="features">
+                <div class="feature">
+                    <h3>Industry Expertise</h3>
+                    <p>Built by career experts and AI specialists with deep understanding of modern recruitment processes and industry requirements.</p>
+                </div>
+                <div class="feature">
+                    <h3>Cutting-edge Technology</h3>
+                    <p>Leveraging the latest in machine learning, natural language processing, and cloud infrastructure for optimal performance.</p>
+                </div>
+                <div class="feature">
+                    <h3>Continuous Innovation</h3>
+                    <p>Regular updates with new features, improved algorithms, and enhanced user experience based on user feedback and market trends.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/docs">API Documentation</a>
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="mailto:support@careerlms.com">Contact</a>
+                <a href="/privacy">Privacy Policy</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Career LMS. All rights reserved. Built with ❤️ for career success.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Counter animation
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current).toLocaleString();
+            }, 16);
+        }
+
+        // Trigger counter animation when stats section is visible
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelectorAll('.stat-number').forEach(counter => {
+                        animateCounter(counter);
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelector('.stats')?.let(stats => statsObserver.observe(stats));
+
+        // Add loading class removal after page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelectorAll('.loading').forEach(element => {
+                    element.classList.remove('loading');
+                    element.classList.add('visible');
+                });
+            }, 100);
+        });
+    </script>
+</body>
+</html>
